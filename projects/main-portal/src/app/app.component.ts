@@ -1,13 +1,25 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, viewChild } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { createRoot } from 'react-dom/client';
+import { ReactSelect } from './components/react-select/react-select';
+import { createElement } from 'react';
+import { StoreService } from '@shared/services/store.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [RouterOutlet, RouterLink],
+  providers: [
+    StoreService
+  ],
 })
 export class AppComponent {
-  title = 'main-portal';
+  public readonly storeService = inject(StoreService);
+
+  public increaseCounter(): void {
+    this.storeService.setCounter(this.storeService.counter + 1);
+  }
 }

@@ -22,7 +22,21 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@pages/*": ["projects/main-portal/src/app/pages/*"],
+      "@components/*": ["projects/main-portal/src/app/components/*"],
+      "@shared/*": ["projects/main-portal/src/app/shared/*"]
+    },
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

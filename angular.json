@@ -11,6 +11,7 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss",
+          "changeDetection": "OnPush",
           "skipTests": true
         },
         "@schematics/angular:class": {
@@ -60,11 +61,7 @@
               "projects/main-portal/src/styles.scss"
             ],
             "scripts": [],
-            "server": "projects/main-portal/src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "projects/main-portal/server.ts"
-            }
+            "server": "projects/main-portal/src/main.server.ts"
           },
           "configurations": {
             "production": {
