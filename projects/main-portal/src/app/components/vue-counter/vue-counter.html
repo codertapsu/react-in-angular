@@ -1,0 +1,7 @@
+<div>
+  <p :class="styles.highlighted">Vue 3.2 Counter: {{ count }}/{{ version }}</p>
+  <button @click="count++">Increment</button>
+  <Notification :message="count" />
+
+  <button @click="backToHome">Home</button>
+</div>

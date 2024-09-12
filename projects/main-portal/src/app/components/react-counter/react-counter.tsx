@@ -2,6 +2,10 @@ import { useCounter } from "@shared/contexts/counter/counter.context";
 import { StoreService } from "@shared/services/store.service";
 import { useInjector } from "@shared/use-injector";
 import { useEffect, useState } from "react";
+import * as styles from "./styles.module.scss";
+
+console.log(styles);
+
 
 export const ReactCounter = () => {
   const injector = useInjector();
@@ -21,7 +25,7 @@ export const ReactCounter = () => {
       <h1>React Counter</h1>
       <div>
         <button onClick={() => storeService.increment()}>Increment</button>
-        <span>{counter}</span>
+        <span className={styles["highlighted"]}>{counter}</span>
       </div>
       <hr />
       <div>
