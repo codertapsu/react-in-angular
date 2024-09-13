@@ -26,8 +26,9 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@pages/*": ["projects/main-portal/src/app/pages/*"],
       "@components/*": ["projects/main-portal/src/app/components/*"],
+      "@core/*": ["projects/main-portal/src/app/core/*"],
+      "@pages/*": ["projects/main-portal/src/app/pages/*"],
       "@shared/*": ["projects/main-portal/src/app/shared/*"]
     },
     "moduleDetection": "force",

@@ -63,6 +63,9 @@ export const ReactSelect: React.FC<PropsWithChildren<ReactSelectProps>> = ({
       </button>
       {children}
       <div>
+        <h5>
+          Render Angular Component in React using Angular's `createComponent`
+        </h5>
         <div ref={notificationRef}></div>
       </div>
       <hr />

@@ -12,6 +12,10 @@ export default (
   options: CustomWebpackBrowserSchema,
   targetOptions: TargetOptions
 ) => {
+  const isProduction =
+    targetOptions.target === 'build' &&
+    targetOptions.configuration === 'production';
+
   if (config.resolve && config.resolve.extensions) {
     config.resolve.extensions.push('.tsx', '.ts', '.js', '.vue', '.scss');
   }
@@ -31,7 +35,7 @@ export default (
     ];
     config.module.rules.forEach((rule: any) => {
       if (rule.test && defaultScssRules.includes(rule.test.toString())) {
-        rule.exclude = /\.module\.scss$/; // Exclude .module.scss files
+        rule.exclude = /\.module\.scss$/;
       }
     });
     config.module.rules.push(
@@ -49,8 +53,8 @@ export default (
         exclude: /node_modules/,
       },
       {
-        test: /\.module\.scss$/, // Separate rule for .module.scss files
-        exclude: /node_modules/, // Also exclude node_modules here
+        test: /\.module\.scss$/,
+        exclude: /node_modules/,
         use: [
           { loader: 'style-loader' },
           {
@@ -58,14 +62,12 @@ export default (
 
             options: {
               modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]', // Customize class names
+                localIdentName: isProduction
+                  ? '[hash:base64]'
+                  : '[path][name]__[local]--[hash:base64:5]',
               },
-              esModule: true, // Enable ES module syntax for CSS modules
+              esModule: true,
             },
-            // options: {
-            //   modules: true, // Enable CSS modules for .module.scss
-            //   // localIdentName: '[path][name]__[local]--[hash:base64:5]',
-            // },
           },
           {
             loader: 'sass-loader',
@@ -74,7 +76,7 @@ export default (
       },
       {
         test: /\.html$/,
-        loader: 'html-loader', // This allows us to import .html files in the TypeScript file
+        loader: 'html-loader',
         exclude: /node_modules/,
       }
     );
@@ -84,6 +86,9 @@ export default (
       new VueLoaderPlugin(),
       new DefinePlugin({
         STABLE_FEATURE: JSON.stringify(true),
+        __VUE_OPTIONS_API__: 'true',
+        __VUE_PROD_DEVTOOLS__: 'false',
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
       })
     );
   }

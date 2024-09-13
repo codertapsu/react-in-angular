@@ -1,7 +1,15 @@
 <div>
   <p :class="styles.highlighted">Vue 3.2 Counter: {{ count }}/{{ version }}</p>
   <button @click="count++">Increment</button>
-  <Notification :message="count" />
+  <NotificationComponent ref="child" :message="count"> </NotificationComponent>
+  <VueSelect>
+    <div>This is a slot</div>
+  </VueSelect>
 
   <button @click="backToHome">Home</button>
+
+  <div>
+    <h5>Render Angular Component in Vue using Angular's `createComponent`</h5>
+    <div ref="notification"></div>
+  </div>
 </div>

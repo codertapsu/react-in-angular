@@ -23,12 +23,22 @@ import {
   provide,
   inject,
   watch,
+  useTemplateRef,
+  defineExpose,
 } from 'vue';
 import * as styles from './styles.module.scss';
 import template from './vue-counter.html';
-import { ANGULAR_INJECTOR, VUE_STATE } from '@shared/tokens/vue.token';
-import { Inject, Injector } from '@angular/core';
+import {
+  ApplicationRef,
+  createComponent,
+  EnvironmentInjector,
+  Inject,
+  Injector,
+} from '@angular/core';
 import { Router } from '@angular/router';
+import { NotificationComponent as AngularNotificationComponent } from '@components/notification/notification.component';
+import { VueSelect } from '@components/vue-select/vue-select';
+import { useCounterStore, useInjector } from '@core/vue';
 
 //   },
 //   template: `
@@ -39,8 +49,17 @@ import { Router } from '@angular/router';
 //     `,
 // };
 
-const Notification = defineComponent(
-  (props) => {
+// interface NotificationComponentProps {
+//   message: string;
+// }
+
+const VUE_STATE = Symbol('VUE_STATE');
+
+const NotificationComponent = defineComponent(
+  (props, { expose }) => {
+    const counterStore = useCounterStore();
+    console.log(counterStore);
+
     const state = inject(VUE_STATE) as any;
     console.log(state);
 
@@ -56,9 +75,35 @@ const Notification = defineComponent(
       }
     );
 
+    const update = () => {
+      console.log('update');
+      counterStore.increase();
+    };
+
+    expose({
+      update,
+    });
+
     return () => {
       // render function or JSX
-      return h('div', `${props.message}/${state.count.value}`);
+      const innerHtml = `
+        Check Notification: ${props.message}/${state.count.value}
+    `;
+
+      return h('div', [
+        h('p', {
+          innerHTML: innerHtml,
+          class: styles.highlighted,
+        }),
+        h(
+          'button',
+          {
+            onClick: update,
+          },
+          `Count: ${state.count.value}xxx`
+        ),
+      ]);
+      // return h('div', `Check Notification: ${props.message}/${state.count.value}`);
     };
 
     // return () => {
@@ -74,9 +119,17 @@ const Notification = defineComponent(
   }
 );
 
+type NotificationComponentInstance = InstanceType<
+  typeof NotificationComponent
+> & {
+  update: () => void;
+};
+
 const VueCounter = defineComponent({
   setup: (props) => {
-    const injector = inject(ANGULAR_INJECTOR) as Injector;
+    const injector = useInjector();
+    const environmentInjector = injector.get(EnvironmentInjector);
+    const appRef = injector.get(ApplicationRef);
     // const count = ref(0);
     // const styles = `
     //   .highlighted {
@@ -84,6 +137,8 @@ const VueCounter = defineComponent({
     //   }
     // `;
     const count = ref(0);
+    const childRef = useTemplateRef<NotificationComponentInstance>('child');
+    const notificationRef = useTemplateRef<HTMLElement>('notification');
 
     // Define the styles object
     // const styles = computed(() => ({
@@ -112,12 +167,28 @@ const VueCounter = defineComponent({
       nextTick(() => {
         // count.value = 5;
       });
+      // const rect = wrapper!.value!.$el!.getBoundingClientRect();
+      // console.log(childRef.value?.update);
 
       // console.log('onMounted');
       // const styleTag = document.createElement('style');
       // styleTag.setAttributeNode(document.createAttribute('scoped'));
       // styleTag.appendChild(document.createTextNode(css));
       // (instance?.proxy?.$el as HTMLElement).appendChild(styleTag);
+
+      const dialogRef = createComponent(AngularNotificationComponent, {
+        environmentInjector,
+        elementInjector: injector,
+        hostElement: notificationRef.value as Element,
+      });
+
+      dialogRef.setInput('text', 'From Vue');
+
+      // document.body.appendChild(dialogRef.location.nativeElement);
+
+      // Register the newly created ref using the `ApplicationRef` instance
+      // to include the component view into change detection cycles.
+      appRef.attachView(dialogRef.hostView);
     });
     // const styles = require('./styles.module.scss');
     // console.log(styles);
@@ -138,7 +209,8 @@ const VueCounter = defineComponent({
   // },
   template,
   components: {
-    Notification,
+    NotificationComponent,
+    VueSelect,
   },
   props: {
     base: String,

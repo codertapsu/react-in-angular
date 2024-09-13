@@ -18,4 +18,8 @@ export class NotificationComponent {
   public readonly storeService = inject(StoreService);
 
   @Input() public text!: string;
+
+  public updateCounter(): void {
+    this.storeService.increment();
+  }
 }
